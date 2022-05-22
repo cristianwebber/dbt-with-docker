@@ -11,14 +11,22 @@ dbt_project:
       dbname: postgres
       schema: dbt_your_name
 
+    local_image:
+      type: postgres
+      threads: 4
+      host: dbt-with-docker-postgres-1
+      port: 5432
+      user: docker
+      pass: docker
+      dbname: postgres
+      schema: local_image
+
     prod:
       type: postgres
       threads: 4
       host: [host]
       port: [port]
-      user: docker
-      pass: docker
+      user: [user]
+      pass: [password]
       dbname: [dbname]
-      schema: public
-
-  
+      schema: [schema]
