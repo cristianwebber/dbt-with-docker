@@ -1,0 +1,8 @@
+# virtual environments
+venv
+.venv
+
+# dbt
+target/
+dbt_packages/
+logs/
