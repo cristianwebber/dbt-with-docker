@@ -21,6 +21,4 @@ COPY .dbt/ .dbt/
 COPY dbt_project.yml dbt_project.yml
 COPY dbt_project/ dbt_project/
 
-
-
-# CMD ["dbt"]
+CMD tail -f /dev/null
