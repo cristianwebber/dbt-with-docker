@@ -11,15 +11,15 @@ dbt_project:
       dbname: postgres
       schema: dbt_your_name
 
-    local_image:
+    docker:
       type: postgres
       threads: 4
-      host: dbt-with-docker-postgres-1
+      host: postgres_instance
       port: 5432
-      user: docker
-      pass: docker
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASSWORD') }}"
       dbname: postgres
-      schema: local_image
+      schema: docker
 
     prod:
       type: postgres

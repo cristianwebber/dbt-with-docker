@@ -9,10 +9,14 @@ services:
       POSTGRES_PASSWORD: docker
     ports: 
       - 5432:5432
-    
   dbt:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     container_name: dbt_instance
+    deploy:
+      replicas: ${DBT_INSTANCE:-0}
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./dbt_project:/root/dbt_project
     env_file:
