@@ -20,29 +20,29 @@ show:                          ## Show the current environment.
 .PHONY: install
 install:                       ## Create a virtual environment and install requirements.
 	@echo "creating virtualenv ..."
-	@rm -rf .venv
-	@virtualenv .venv
-	@./.venv/bin/pip install -r requirements.txt
+	@rm -rf venv
+	@virtualenv venv || python3 -m venv venv
+	@./venv/bin/pip install -r requirements.txt
 	@echo
-	@echo "!!! Please run 'source .venv/bin/activate' to enable the environment !!!"
+	@echo "!!! Please run 'source venv/bin/activate' to enable the environment !!!"
 
 .PHONY: clean
 clean:                         ## Clean unused files.
-	@rm -rf .venv
+	@rm -rf venv
 	@rm -rf target/*
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
 .PHONY: start_services 
-start_services: _build_image   ## Start database and build and start dbt container.
+start_services:                ## Start database and build and start dbt container.
 	@docker compose up -d
 
 .PHONY: stop_services 
 stop_services:                 ## Stop database and dbt containers.
 	@docker compose down
 
-.PHONY: _build_image
-_build_image:
+.PHONY: build_image
+build_image:
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
 .PHONY: dbt 
