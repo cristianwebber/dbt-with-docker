@@ -21,4 +21,4 @@ COPY .dbt/ .dbt/
 COPY dbt_project.yml dbt_project.yml
 COPY dbt_project/ dbt_project/
 
-CMD tail -f /dev/null
+CMD exec /bin/sh -c "trap : TERM INT; (while true; do sleep 1000; done) & wait"
