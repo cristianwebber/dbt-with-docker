@@ -4,21 +4,21 @@ ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exi
 include .env
 
 .PHONY: help
-help: ## Show the help.
+help:                          ## Show the help.
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Targets:"
 	@fgrep "##" Makefile | fgrep -v fgrep
 
 .PHONY: show
-show: ## Show the current environment.
+show:                          ## Show the current environment.
 	@echo "Current environment:"
 	@echo "Running using $(ENV_PREFIX)"
 	@$(ENV_PREFIX)python -V
 	@$(ENV_PREFIX)python -m site
 
 .PHONY: install
-install: ## Create a virtual environment and install requirements.
+install:                       ## Create a virtual environment and install requirements.
 	@echo "creating virtualenv ..."
 	@rm -rf .venv
 	@virtualenv .venv
@@ -27,24 +27,24 @@ install: ## Create a virtual environment and install requirements.
 	@echo "!!! Please run 'source .venv/bin/activate' to enable the environment !!!"
 
 .PHONY: clean
-clean: ## Clean unused files.
+clean:                         ## Clean unused files.
 	@rm -rf .venv
 	@rm -rf target/*
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
-.PHONY: start_services ## Start database and dbt containers
-start_services: _build_image
+.PHONY: start_services 
+start_services: _build_image   ## Start database and build and start dbt container.
 	@docker compose up -d
 
-.PHONY: stop_services ## Stop database and dbt containers
-stop_services:
+.PHONY: stop_services 
+stop_services:                 ## Stop database and dbt containers.
 	@docker compose down
 
 .PHONY: _build_image
 _build_image:
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
-.PHONY: run_image ## Run dbt image with a bridge network with postgres container
-run_image:
+.PHONY: dbt 
+dbt:                           ## Enter in container to start running dbt commands
 	@docker exec -it dbt_instance bash
