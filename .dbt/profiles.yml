@@ -1,13 +1,13 @@
 dbt_project:
-  target: dev
+  target: "{{ env_var('DBT_ENV', 'local') }}"
   outputs:
-    dev:
+    local:
       type: postgres
       threads: 4
       host: localhost
       port: 5432
-      user: docker
-      pass: docker
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASSWORD') }}"
       dbname: postgres
       schema: dbt_your_name
 
@@ -19,14 +19,14 @@ dbt_project:
       user: "{{ env_var('DBT_USER') }}"
       pass: "{{ env_var('DBT_PASSWORD') }}"
       dbname: postgres
-      schema: docker
+      schema: dbt_docker
 
     prod:
       type: postgres
       threads: 4
-      host: [host]
-      port: [port]
-      user: [user]
-      pass: [password]
-      dbname: [dbname]
-      schema: [schema]
+      host: "{{ env_var('DBT_HOST') }}"
+      port: 5432
+      user: "{{ env_var('DBT_USER') }}"
+      pass: "{{ env_var('DBT_PASSWORD') }}"
+      dbname: "{{ env_var('DBT_DBNAME') }}"
+      schema: "{{ env_var('DBT_PRD_SCHEMA') }}"

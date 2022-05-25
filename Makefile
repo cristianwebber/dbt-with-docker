@@ -10,6 +10,7 @@ help:                          ## Show the help.
 	@echo "Targets:"
 	@fgrep "##" Makefile | fgrep -v fgrep
 
+############## Running local ##############
 .PHONY: show
 show:                          ## Show the current environment.
 	@echo "Current environment:"
@@ -38,13 +39,18 @@ clean:                         ## Clean unused files.
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
+############ Running in docker ############
 .PHONY: start_services 
-start_services:                ## Start database and build and start dbt container.
+start_services:                ## Start database and build and start dbt container
 	@docker compose up -d
 
 .PHONY: stop_services 
 stop_services:                 ## Stop database and dbt containers.
 	@docker compose down
+
+.PHONY: clean_image
+clean_image:                   ## Stop database and dbt containers.
+	@docker rmi $(IMAGE_NAME):$(IMAGE_VERSION)
 
 .PHONY: build_image
 build_image:

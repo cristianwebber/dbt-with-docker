@@ -20,6 +20,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./dbt_project:/root/dbt_project
+    environment:
+      - DBT_ENV=docker
     env_file:
       - .env
       - .secrets.env
