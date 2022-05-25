@@ -1,5 +1,5 @@
 .ONESHELL:
-ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
+ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('venv/bin/pip').exists(): print('venv/bin/')")
 
 include .env
 
@@ -22,9 +22,14 @@ install:                       ## Create a virtual environment and install requi
 	@echo "creating virtualenv ..."
 	@rm -rf venv
 	@virtualenv venv || python3 -m venv venv
-	@./venv/bin/pip install -r requirements.txt
+	@$(ENV_PREFIX)pip install -r requirements.txt
 	@echo
-	@echo "!!! Please run 'source venv/bin/activate' to enable the environment !!!"
+	@echo "!!! Please run 'source $(ENV_PREFIX)activate' to enable the environment !!!"
+
+.PHONY: update_requirements
+update_requirements:           ## Upgrade requirements and save them.
+	@$(ENV_PREFIX)pip install --upgrade --force-reinstall -r requirements.txt
+	@$(ENV_PREFIX)pip freeze > requirements.txt
 
 .PHONY: clean
 clean:                         ## Clean unused files.
