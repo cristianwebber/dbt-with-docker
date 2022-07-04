@@ -1,10 +1,11 @@
 .ONESHELL:
-ENV_PREFIX=$(shell python3 -c "if __import__('pathlib').Path('venv/bin/pip').exists(): print('venv/bin')")
+ENV_PREFIX='venv/bin'
 
 include .env
-include .secrets.env
 
-.PHONY: help show install update_requirements clean start_services stop_services clean_image build_image lint
+.PHONY: help show install update_requirements clean
+.PHONY: database stop_database clean_image build_image
+.PHONY: lint
 
 help:                       ## Show the help.
 	@echo "Usage: make <target>"
@@ -38,11 +39,17 @@ clean:                      ## Clean unused files.
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
+################# Linting ################# 
+lint:                       ## Lint the project with sqlfluff
+	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres
+
 ############ Running in docker ############ 
-start_services:             ## Start database.
+database:                   ## Start database.
+	@echo "Starting database with image $(POSTGRES_IMAGE)."
 	@docker compose up -d
  
-stop_services:              ## Stop database.
+stop_database:              ## Stop database.
+	@echo "Stoping database."
 	@docker compose down
 
 clean_image:                ## Remove database and dbt images.
@@ -50,6 +57,3 @@ clean_image:                ## Remove database and dbt images.
 
 build_image:                ## Build dbt docker image
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
-
-lint:                       ## Lint the project with sqlfluff
-	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres

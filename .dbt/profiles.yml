@@ -11,16 +11,6 @@ project:
       dbname: postgres
       schema: dbt_your_name
 
-    docker:
-      type: postgres
-      threads: 4
-      host: postgres_instance
-      port: 5432
-      user: "{{ env_var('DBT_USER') }}"
-      pass: "{{ env_var('DBT_PASSWORD') }}"
-      dbname: postgres
-      schema: dbt_docker
-
     prod:
       type: postgres
       threads: 4
