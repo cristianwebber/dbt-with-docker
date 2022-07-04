@@ -26,6 +26,7 @@ install:                    ## Create a virtual environment and install requirem
 	@virtualenv venv || python3 -m venv venv
 	@$(ENV_PREFIX)/pip install -r requirements.txt
 	@$(ENV_PREFIX)/pip install pre-commit==2.19
+	@$(ENV_PREFIX)/pre-commit install
 	@$(ENV_PREFIX)/dbt deps
 	@echo
 	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
