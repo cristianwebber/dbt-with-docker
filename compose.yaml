@@ -7,5 +7,5 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
-    ports: 
+    ports:
       - 5432:5432

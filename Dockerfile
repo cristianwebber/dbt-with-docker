@@ -20,7 +20,7 @@ WORKDIR /root
 
 COPY .dbt/ .dbt/
 COPY dbt_project.yml dbt_project.yml
-COPY packages.yml packages.yml 
+COPY packages.yml packages.yml
 COPY project/ project/
 
 RUN dbt deps

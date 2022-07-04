@@ -136,7 +136,7 @@ def generate_task_dependency(file_string="", manifest={}):
                     upstream_node_values = manifest["nodes"][upstream_node]
                     upstream_node_name = clean_name(f"{upstream_node_values['schema']}.{upstream_node_values['name']}")
                     upstream_node_test_name = f"test.{upstream_node_name}"
-                    
+
                     if any("test." in upstream_dependencies for upstream_dependencies in manifest["child_map"][upstream_node]):
                         # if there's a test for the upstream node, set current model after it
                         dependency = f"\n    {clean_task_name(upstream_node_test_name)} >> {clean_task_name(node_name)}"
@@ -169,5 +169,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-schedule", help="""schedules the DAG with provided CRON schedule (required)""", required=True, default=None, action='store', dest='schedule')
     args = parser.parse_args()
-    
+
     main(args.schedule)

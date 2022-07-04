@@ -5,7 +5,7 @@ include .env
 
 .PHONY: help show install update_requirements clean
 .PHONY: database stop_database clean_image build_image
-.PHONY: lint
+.PHONY: lint pre-commit
 
 help:                       ## Show the help.
 	@echo "Usage: make <target>"
@@ -25,6 +25,7 @@ install:                    ## Create a virtual environment and install requirem
 	@rm -rf venv
 	@virtualenv venv || python3 -m venv venv
 	@$(ENV_PREFIX)/pip install -r requirements.txt
+	@$(ENV_PREFIX)/pip install pre-commit==2.19
 	@$(ENV_PREFIX)/dbt deps
 	@echo
 	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
@@ -39,15 +40,18 @@ clean:                      ## Clean unused files.
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
-################# Linting ################# 
+################# Linting #################
 lint:                       ## Lint the project with sqlfluff
 	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres
 
-############ Running in docker ############ 
+pre-commit:
+	@$(ENV_PREFIX)/pre-commit run --all-files
+
+############ Running in docker ############
 database:                   ## Start database.
 	@echo "Starting database with image $(POSTGRES_IMAGE)."
 	@docker compose up -d
- 
+
 stop_database:              ## Stop database.
 	@echo "Stoping database."
 	@docker compose down
