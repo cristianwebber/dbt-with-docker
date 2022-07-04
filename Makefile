@@ -56,6 +56,10 @@ clean_image:                   ## Stop database and dbt containers.
 build_image:
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
+.PHONY: lint
+lint:
+	@sqlfluff lint dbt_project/ --dialect postgres
+
 .PHONY: dbt 
 dbt:                           ## Enter in container to start running dbt commands
 	@docker exec -it dbt_instance bash
