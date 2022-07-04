@@ -1,15 +1,15 @@
-name: 'dbt_project'
+name: 'project'
 version: '0.1.0'
 config-version: 2
 
-profile: 'dbt_project'
+profile: 'project'
 
-model-paths: ["dbt_project/models"]
-analysis-paths: ["dbt_project/analyses"]
-test-paths: ["dbt_project/tests"]
-seed-paths: ["dbt_project/seeds"]
-macro-paths: ["dbt_project/macros"]
-snapshot-paths: ["dbt_project/snapshots"]
+model-paths: ["project/models"]
+analysis-paths: ["project/analyses"]
+test-paths: ["project/tests"]
+seed-paths: ["project/seeds"]
+macro-paths: ["project/macros"]
+snapshot-paths: ["project/snapshots"]
 
 target-path: "target"
 clean-targets:
@@ -17,6 +17,6 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  dbt_project:
+  project:
     example:
       +materialized: view

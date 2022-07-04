@@ -1,65 +1,55 @@
 .ONESHELL:
-ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('venv/bin/pip').exists(): print('venv/bin/')")
+ENV_PREFIX=$(shell python3 -c "if __import__('pathlib').Path('venv/bin/pip').exists(): print('venv/bin')")
 
 include .env
+include .secrets.env
 
-.PHONY: help
-help:                          ## Show the help.
+.PHONY: help show install update_requirements clean start_services stop_services clean_image build_image lint
+
+help:                       ## Show the help.
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Targets:"
 	@fgrep "##" Makefile | fgrep -v fgrep
 
 ############## Running local ##############
-.PHONY: show
-show:                          ## Show the current environment.
+show:                       ## Show the current environment.
 	@echo "Current environment:"
-	@echo "Running using $(ENV_PREFIX)"
-	@$(ENV_PREFIX)python -V
-	@$(ENV_PREFIX)python -m site
+	@echo "Running using $(ENV_PREFIX)/"
+	@$(ENV_PREFIX)/python3 -V
+	@$(ENV_PREFIX)/python3 -m site
 
-.PHONY: install
-install:                       ## Create a virtual environment and install requirements.
+install:                    ## Create a virtual environment and install requirements.
 	@echo "creating virtualenv ..."
 	@rm -rf venv
 	@virtualenv venv || python3 -m venv venv
-	@$(ENV_PREFIX)pip install -r requirements.txt
+	@$(ENV_PREFIX)/pip install -r requirements.txt
+	@$(ENV_PREFIX)/dbt deps
 	@echo
-	@echo "!!! Please run 'source $(ENV_PREFIX)activate' to enable the environment !!!"
+	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
 
-.PHONY: update_requirements
-update_requirements:           ## Upgrade requirements and save them.
-	@$(ENV_PREFIX)pip install --upgrade --force-reinstall -r requirements.txt
-	@$(ENV_PREFIX)pip freeze > requirements.txt
+update_requirements:        ## Upgrade requirements and save them.
+	@$(ENV_PREFIX)/pip install --upgrade --force-reinstall -r requirements.txt
+	@$(ENV_PREFIX)/pip freeze > requirements.txt
 
-.PHONY: clean
-clean:                         ## Clean unused files.
+clean:                      ## Clean unused files.
 	@rm -rf venv
 	@rm -rf target/*
 	@rm -rf logs/*
 	@rm -rf dbt_packages/
 
-############ Running in docker ############
-.PHONY: start_services 
-start_services:                ## Start database and build and start dbt container
+############ Running in docker ############ 
+start_services:             ## Start database.
 	@docker compose up -d
-
-.PHONY: stop_services 
-stop_services:                 ## Stop database and dbt containers.
+ 
+stop_services:              ## Stop database.
 	@docker compose down
 
-.PHONY: clean_image
-clean_image:                   ## Stop database and dbt containers.
+clean_image:                ## Remove database and dbt images.
 	@docker rmi $(IMAGE_NAME):$(IMAGE_VERSION)
 
-.PHONY: build_image
-build_image:
+build_image:                ## Build dbt docker image
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
-.PHONY: lint
-lint:
-	@sqlfluff lint dbt_project/ --dialect postgres
-
-.PHONY: dbt 
-dbt:                           ## Enter in container to start running dbt commands
-	@docker exec -it dbt_instance bash
+lint:                       ## Lint the project with sqlfluff
+	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres
