@@ -46,6 +46,9 @@ lint:                       ## Lint the project with sqlfluff
 	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres
 
 pre-commit:
+	@$(ENV_PREFIX)/pre-commit run
+
+pre-commit_all_files:
 	@$(ENV_PREFIX)/pre-commit run --all-files
 
 ############ Running in docker ############
