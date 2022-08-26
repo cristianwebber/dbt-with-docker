@@ -1,5 +1,5 @@
 .ONESHELL:
-ENV_PREFIX='venv/bin'
+ENV_PREFIX=venv/bin
 
 include .env
 
@@ -20,22 +20,37 @@ show:                       ## Show the current environment.
 	@$(ENV_PREFIX)/python3 -V
 	@$(ENV_PREFIX)/python3 -m site
 
-config_pre-commit:
+config_pre-commit:          ## Config pre-commit.
 	@pip install pre-commit==2.20
 	@pre-commit install
 
 install:                    ## Create a virtual environment and install requirements.
 	@echo "creating virtualenv ..."
 	@rm -rf venv
-	@virtualenv venv || python3 -m venv venv
-	@$(ENV_PREFIX)/pip install -r requirements.txt
-	@$(ENV_PREFIX)/dbt deps
+	@virtualenv -q venv || python3 -m venv venv
+
+	@echo "installing requirements ..."
+	@$(ENV_PREFIX)/pip install -q -r requirements.txt
+	@$(ENV_PREFIX)/dbt -q deps
+
 	@echo
 	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
 
 update_requirements:        ## Upgrade requirements and save them.
-	@$(ENV_PREFIX)/pip install --upgrade --force-reinstall -r requirements.txt
+	@echo "creating virtualenv ..."
+	@rm -rf venv
+
+	@echo "updating requirements ..."
+	@sed 's/==/>=/g' requirements.txt > TMP_FILE && mv TMP_FILE requirements.txt
+	@virtualenv -q venv || python3 -m venv venv
+	@$(ENV_PREFIX)/pip install -q -r requirements.txt
+
+	@echo "updated requirements."
 	@$(ENV_PREFIX)/pip freeze > requirements.txt
+	@$(ENV_PREFIX)/dbt -q deps
+
+	@echo
+	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
 
 clean:                      ## Clean unused files.
 	@rm -rf venv
@@ -44,14 +59,14 @@ clean:                      ## Clean unused files.
 	@rm -rf dbt_packages/
 
 ################# Linting #################
-lint:                       ## Lint the project with sqlfluff
-	@pre-commit run sqlfluff-lint --all-files
-	@pre-commit run sqlfluff-fix --all-files
+lint:                       ## Lint changed files with sqlfluff
+	@pre-commit run sqlfluff-lint
+	@pre-commit run sqlfluff-fix
 
-pre-commit:
+pre-commit:                 ## Run pre-commit hooks for changed files
 	@pre-commit run
 
-pre-commit_all_files:
+pre-commit_all_files:       ## Run pre-commit hooks for all files
 	@pre-commit run --all-files
 
 ############ Running in docker ############
@@ -63,8 +78,8 @@ stop_database:              ## Stop database.
 	@echo "Stoping database."
 	@docker compose down
 
-clean_image:                ## Remove database and dbt images.
+clean_image:                ## Remove dbt docker image.
 	@docker rmi $(IMAGE_NAME):$(IMAGE_VERSION)
 
-build_image:                ## Build dbt docker image
+build_image:                ## Build dbt docker image.
 	@docker build -t $(IMAGE_NAME):$(IMAGE_VERSION) .
