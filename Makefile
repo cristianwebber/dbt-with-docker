@@ -3,7 +3,7 @@ ENV_PREFIX='venv/bin'
 
 include .env
 
-.PHONY: help show install update_requirements clean
+.PHONY: help show install update_requirements clean config_pre-commit
 .PHONY: database stop_database clean_image build_image
 .PHONY: lint pre-commit
 
@@ -20,13 +20,15 @@ show:                       ## Show the current environment.
 	@$(ENV_PREFIX)/python3 -V
 	@$(ENV_PREFIX)/python3 -m site
 
+config_pre-commit:
+	@pip install pre-commit==2.20
+	@pre-commit install
+
 install:                    ## Create a virtual environment and install requirements.
 	@echo "creating virtualenv ..."
 	@rm -rf venv
 	@virtualenv venv || python3 -m venv venv
 	@$(ENV_PREFIX)/pip install -r requirements.txt
-	@$(ENV_PREFIX)/pip install pre-commit==2.19
-	@$(ENV_PREFIX)/pre-commit install
 	@$(ENV_PREFIX)/dbt deps
 	@echo
 	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
@@ -43,14 +45,14 @@ clean:                      ## Clean unused files.
 
 ################# Linting #################
 lint:                       ## Lint the project with sqlfluff
-	@$(ENV_PREFIX)/pre-commit run sqlfluff-lint --all-files
-	@$(ENV_PREFIX)/pre-commit run sqlfluff-fix --all-files
+	@pre-commit run sqlfluff-lint --all-files
+	@pre-commit run sqlfluff-fix --all-files
 
 pre-commit:
-	@$(ENV_PREFIX)/pre-commit run
+	@pre-commit run
 
 pre-commit_all_files:
-	@$(ENV_PREFIX)/pre-commit run --all-files
+	@pre-commit run --all-files
 
 ############ Running in docker ############
 database:                   ## Start database.
