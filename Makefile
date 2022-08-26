@@ -43,7 +43,8 @@ clean:                      ## Clean unused files.
 
 ################# Linting #################
 lint:                       ## Lint the project with sqlfluff
-	@$(ENV_PREFIX)/sqlfluff lint dbt_project/ --dialect postgres
+	@$(ENV_PREFIX)/pre-commit run sqlfluff-lint --all-files
+	@$(ENV_PREFIX)/pre-commit run sqlfluff-fix --all-files
 
 pre-commit:
 	@$(ENV_PREFIX)/pre-commit run
