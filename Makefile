@@ -2,6 +2,7 @@
 ENV_PREFIX=venv/bin
 
 include .env
+include .secrets.env
 
 .PHONY: help show install update_requirements clean config_pre-commit
 .PHONY: database stop_database clean_image build_image
@@ -51,6 +52,11 @@ update_requirements:        ## Upgrade requirements and save them.
 
 	@echo
 	@echo "!!! Please run 'source $(ENV_PREFIX)/activate' to enable the environment !!!"
+
+docs:                       ## Create and serve dbt docs.
+	@export DBT_PROFILES_DIR=".dbt/"
+	@$(ENV_PREFIX)/dbt docs generate
+	@$(ENV_PREFIX)/dbt docs serve
 
 clean:                      ## Clean unused files.
 	@rm -rf venv
