@@ -9,7 +9,7 @@ project:
       user: "{{ env_var('DBT_USER') }}"
       pass: "{{ env_var('DBT_PASSWORD') }}"
       dbname: postgres
-      schema: dbt_your_name
+      schema: "dbt_{{ env_var('DEV_NAME') }}"
 
     prod:
       type: postgres
