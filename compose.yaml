@@ -1,11 +1,11 @@
 services:
   postgres:
-    image: ${POSTGRES_IMAGE}
+    image: "${POSTGRES_IMAGE}"
     container_name: postgres_instance
     restart: always
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: ${DBT_USER}
-      POSTGRES_PASSWORD: ${DBT_PASSWORD}
+      POSTGRES_USER: "${DBT_USER}"
+      POSTGRES_PASSWORD: "${DBT_PASSWORD}"
     ports:
       - 5432:5432
