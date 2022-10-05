@@ -19,4 +19,4 @@ clean-targets:
 models:
   project:
     example:
-      +materialized: view
+      +materialized: table

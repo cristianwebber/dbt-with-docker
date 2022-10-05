@@ -3,3 +3,5 @@ packages:
     version: 0.8.6
   - package: calogica/dbt_expectations
     version: 0.5.8
+  - package: dbt-labs/metrics
+    version: 0.3.6

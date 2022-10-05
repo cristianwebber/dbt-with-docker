@@ -1,0 +1,21 @@
+
+version: 2
+
+metrics:
+  - name: ids
+    label: Total records
+    model: ref('my_second_dbt_model')
+    description: "Count of unique records."
+
+    type: count
+    sql: id
+
+    timestamp: signup_date
+    time_grains: [day, week, month]
+
+    filters:
+      - field: id
+        operator: '<='
+        value: '100'
+
+    meta: {team: Finance}
